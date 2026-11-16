@@ -105,6 +105,7 @@ details[open] summary::before{content:"▾ ";}
 .dleg i{width:11px;height:11px;border-radius:2px;flex:none}
 .dleg b{margin-left:auto;font-variant-numeric:tabular-nums;padding-left:8px}
 @media (max-width:360px){.dsvg{width:116px;height:116px}.dwrap{gap:12px}.dleg{font-size:12.5px}}
+.controls,#more,#tabs{display:none!important}
 </style>
 </head>
 <body>
@@ -194,7 +195,7 @@ function cols(title,sub){
 }
 const ERA=y=>y<1700?"Before 1700":y<1800?"1700–1799":y<1850?"1800–1849":y<1900?"1850–1899":y<1950?"1900–1949":y<1980?"1950–1979":y<2000?"1980–1999":"2000 on";
 hbar("g","Gender","",group("gender"),{donut:true,order:["Male","Female","None","Male and female"],extra:tierLine(o=>o.gender==="Female","Female share")});
-hbar("s","Species","",group("species"),{extra:tierLine(o=>o.species==="Human","Human share")});
+hbar("s","Species","",group("species"),{donut:true,order:["Human","Supernatural","Animal"],extra:tierLine(o=>o.species==="Human","Human share")});
 hbar("d","Date of publication","",group("year",y=>ERA(y)),{order:["Before 1700","1700–1799","1800–1849","1850–1899","1900–1949","1950–1979","1980–1999","2000 on"]});
 hbar("f","Series or standalone","",group("franchise",k=>k?"Series":"Standalone"),{extra:tierLine(o=>!!o.franchise,"Series share")});
 hbar("st","Authors","",group("studio"),{minOther:2});

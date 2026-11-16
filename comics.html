@@ -105,6 +105,7 @@ details[open] summary::before{content:"▾ ";}
 .dleg i{width:11px;height:11px;border-radius:2px;flex:none}
 .dleg b{margin-left:auto;font-variant-numeric:tabular-nums;padding-left:8px}
 @media (max-width:360px){.dsvg{width:116px;height:116px}.dwrap{gap:12px}.dleg{font-size:12.5px}}
+.controls,#more,#tabs{display:none!important}
 </style>
 </head>
 <body>
@@ -197,8 +198,7 @@ hbar("s","Species","",group("species"),{extra:tierLine(o=>o.species==="Human","H
 cols("Date of first appearance","");
 hbar("f","Shared universe or standalone","",group("studio",(k,o)=>(o.franchise==="Watchmen"||k==="Image"||k==="Mirage")?"Standalone":"Shared universe"),{extra:tierLine(o=>!(o.franchise==="Watchmen"||o.studio==="Image"||o.studio==="Mirage"),"Shared-universe share")});
 hbar("fr","Heroes","",group("franchise"),{minOther:2});
-hbar("st","Publisher","",group("studio",k=>PAR[k]||k),{minOther:1});
-hbar("ge","Genre","",group("genre"),{flag:true});
+hbar("st","Marvel vs DC","",group("studio",k=>k==="Marvel"||k==="DC"?k:"Other"),{donut:true,order:["Marvel","DC","Other"]});
 hbar("ar","Archetype","",group("archetype"),{flag:true});
 hbar("k","Killer or not","",group("killer"),{order:["Killer","Not a killer"],extra:tierLine(o=>o.killer==="Killer","Killer share")});
 hbar("pw","Superpower or not","",group("power"),{order:["Superpower","No superpower"],extra:tierLine(o=>o.power==="Superpower","Superpower share")});
