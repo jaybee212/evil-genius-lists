@@ -120,6 +120,20 @@ details[open] summary::before{content:"▾ ";}
 .stab .mb{display:none}
 @media (max-width:400px){.stab table{font-size:12px}.stab th{font-size:9.5px;letter-spacing:.03em}.stab td,.stab th{padding:5px 3px!important}.cross td.p{padding-left:2px}.stab td.all span{min-width:0}.stab td:first-child{hyphens:auto;overflow-wrap:anywhere}}
 @media (max-width:600px){.stab td.all{width:auto}.stab td.all .b{display:none}.stab .mb{display:block;height:6px;background:var(--chip);border-radius:0 3px 3px 0;margin-top:5px}.stab .mb i{display:block;height:100%;background:var(--ink);border-radius:0 3px 3px 0}.stab tr.top .mb i{background:var(--accent)}.stab td,.stab th{padding:6px 4px}}
+.sh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pick select{font:inherit;font-size:13px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:5px 26px 5px 8px;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;background-size:5px 5px;background-repeat:no-repeat;cursor:pointer}
+.pick .vh{position:absolute;left:-9999px}
+.hbars{margin-top:10px}
+.hr{display:grid;grid-template-columns:minmax(96px,32%) 1fr 5.6em;gap:12px;align-items:center;padding:5px 0}
+.hl{font-size:13.5px;line-height:1.25}
+.ht{height:14px;background:var(--chip);border-radius:0 7px 7px 0;overflow:hidden}
+.ht i{display:block;height:100%;background:var(--ink);border-radius:0 7px 7px 0;transition:width .35s ease}
+.hr.top .ht i{background:var(--accent)}
+.hv{text-align:right;font-variant-numeric:tabular-nums;font-size:13.5px;white-space:nowrap}
+.hv span{color:var(--muted);font-size:12px;margin-left:4px}
+.hr.zero .hl,.hr.zero .hv{color:var(--muted)}
+.oth{margin-top:10px}
+@media (max-width:480px){.hr{grid-template-columns:1fr auto;gap:4px 10px;padding:6px 0}.hl{grid-column:1}.hv{grid-column:2;grid-row:1}.ht{grid-column:1 / span 2;height:12px}}
 </style>
 </head>
 <body>
@@ -142,22 +156,32 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const pct=(k,n)=>n?Math.round(k/n*100)+"%":"–";
 const nIn=m=>R.filter(o=>o.media.includes(m)).length;
 const shared=R.filter(o=>o.media.length>1).length;
-document.getElementById("lede").innerHTML=`Every villain in the Books Top ${D.tops.books}, the Film Top ${D.tops.film}, the TV Top ${D.tops.tv} and the Comics Top ${D.tops.comics}, counted once each: <strong>${R.length} characters</strong>. ${shared} of them make more than one Top list; each is classified once, by their original version (the Joker by the comics, Hannibal Lecter by the novels). The first column is the combined total; the others show the share within each medium's Top list, so the media can be compared.`;
+document.getElementById("lede").innerHTML=`Every villain in the Books Top ${D.tops.books}, the Film Top ${D.tops.film}, the TV Top ${D.tops.tv} and the Comics Top ${D.tops.comics}, counted once each: <strong>${R.length} characters</strong>. ${shared} of them make more than one Top list; each is classified once, by their original version (the Joker by the comics, Hannibal Lecter by the novels). Use the menu on any chart to switch between all villains and a single medium's Top list; every chart follows the same choice.`;
+const CH=[];let cur="all";
+const VIEWS=[["all","All villains"],...M.map(([m,l])=>[m,l+" Top "+D.tops[m]])];
 function stab(title,sub,key,opt={}){
   const groups=new Map();R.forEach(o=>{const k=o[key];if(!groups.has(k))groups.set(k,[]);groups.get(k).push(o)});
   let e=[...groups.entries()];
   if(opt.order)e.sort((a,b)=>opt.order.indexOf(a[0])-opt.order.indexOf(b[0]));else e.sort((a,b)=>b[1].length-a[1].length||String(a[0]).localeCompare(String(b[0])));
   let other=null;
-  if(opt.minOther){const big=e.filter(x=>x[1].length>=opt.minOther||opt.keep?.includes(x[0])),small=e.filter(x=>!(x[1].length>=opt.minOther||opt.keep?.includes(x[0])));if(small.length>1){other=small;e=[...big,["Other countries ("+small.length+")",small.flatMap(x=>x[1])]]}}
-  const max=Math.max(...e.map(x=>x[1].length));const tot=R.length;const N=Object.fromEntries(M.map(([m])=>[m,nIn(m)]));
-  const top=e.reduce((a,b)=>b[1].length>a[1].length?b:a)[0];
+  if(opt.minOther){const big=e.filter(x=>x[1].length>=opt.minOther||opt.keep?.includes(x[0])),small=e.filter(x=>!(x[1].length>=opt.minOther||opt.keep?.includes(x[0])));if(small.length>1){other=small;e=[...big,["Other countries",small.flatMap(x=>x[1])]]}}
   const el=document.createElement("div");el.className="stab";
-  el.innerHTML=`<h3>${title}${opt.flag?'<span class="flag">judgement</span>':''}</h3><p class="sub">${sub}</p>
-  <table><thead><tr><th></th><th>All</th>${M.map(([,l])=>`<th>${l}</th>`).join("")}</tr></thead><tbody>${e.map(([k,v])=>{
-    const per=M.map(([m])=>{const c=v.filter(o=>o.media.includes(m)).length;return `<td class="m" title="${c} of ${N[m]}">${pct(c,N[m])}</td>`}).join("");
-    return `<tr class="${k===top?"top":""}"><td>${esc(k)}<div class="mb"><i style="width:${v.length/max*100}%"></i></div></td><td class="all"><div class="w"><div class="b"><i style="width:${v.length/max*100}%"></i></div><span>${v.length} · ${pct(v.length,tot)}</span></div></td>${per}</tr>`}).join("")}</tbody></table>
-  ${other?`<p class="sub" style="margin-top:8px">Other countries: ${other.map(([k,v])=>`${esc(k)} (${v.length})`).join(", ")}.</p>`:""}`;
+  el.innerHTML=`<div class="sh"><h3>${title}${opt.flag?'<span class="flag">judgement</span>':''}</h3><label class="pick"><span class="vh">Show</span><select aria-label="Show which villains">${VIEWS.map(([v,l])=>`<option value="${v}">${l}</option>`).join("")}</select></label></div><p class="sub">${sub}</p><div class="hbars"></div>${other?'<p class="sub oth"></p>':""}`;
+  el.querySelector("select").addEventListener("change",ev=>{cur=ev.target.value;draw()});
   document.getElementById("sum").appendChild(el);
+  CH.push({el,e,other,order:!!opt.order});
+}
+function draw(){
+  const tot=cur==="all"?R.length:R.filter(o=>o.media.includes(cur)).length;
+  const inView=o=>cur==="all"||o.media.includes(cur);
+  CH.forEach(({el,e,other,order})=>{
+    el.querySelector("select").value=cur;
+    let rows=e.map(([k,v])=>[k,v.filter(inView).length]);
+    if(!order)rows.sort((a,b)=>(a[0]==="Other countries")-(b[0]==="Other countries")||b[1]-a[1]);
+    const max=Math.max(1,...rows.map(r=>r[1]));const top=Math.max(...rows.map(r=>r[1]));
+    el.querySelector(".hbars").innerHTML=rows.map(([k,c])=>`<div class="hr${c===top&&c>0?" top":""}${c===0?" zero":""}"><div class="hl">${esc(k)}</div><div class="ht"><i style="width:${c/max*100}%"></i></div><div class="hv"><b>${pct(c,tot)}</b> <span>${c}</span></div></div>`).join("");
+    if(other){el.querySelector(".oth").textContent="Other countries: "+other.map(([k,v])=>[k,v.filter(inView).length]).filter(x=>x[1]).map(([k,c])=>`${k} (${c})`).join(", ")+"."}
+  });
 }
 stab("Gender","Gender of the character as presented. “None” is for genderless beings such as the Borg and HAL 9000; the Master has been played as both.","gender");
 stab("Species","What the villain is. “Superhuman” is a human with powers; “Supernatural” covers gods, demons, vampires and spirits; “Artificial” covers machines, AIs and clones.","species");
@@ -167,6 +191,7 @@ stab("Superpower or not","Abilities no ordinary human has. Built-in or chemical 
 stab("Ethnicity","As the story states it; where it doesn't, as cast (live action) or drawn (animation and comics). “Not human” covers aliens, machines, animals and demons; “Not shown” is for humans whose ethnicity can't be seen (Mystique, the Wicked Witch of the West). Some calls rest on appearance.","ethnicity",{flag:true,order:["White","Black","Latino","East Asian","South Asian","Middle Eastern / North African","Romani","Not shown","Not human"]});
 stab("Nationality","The character's own country, not the country that made the work. “Fictional land” covers invented countries and worlds (Westeros, Oz, Latveria); “Not of Earth” covers aliens and other planets; “None” is for animals, machines and demons with no nation.","nationality",{minOther:3,keep:["Fictional land","Not of Earth","None","Unknown"]});
 stab("Date of creation","Decade the character was first created, in any medium, so the Joker is 1940 and Count Dracula 1897 whatever version a list names. Plays are dated by first performance. Real people (Richard III, Commodus, Amon Goeth, Tommy DeVito, Al Swearengen) are counted separately.","decade",{order:["Before 1800","1800s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s","2020s","Real person"]});
+draw();
 // crossovers
 document.getElementById("xnote").textContent=`${D.cross.length} villains appear in more than one of the Top lists (Books Top ${D.tops.books}, Film Top ${D.tops.film}, TV Top ${D.tops.tv}, Comics Top ${D.tops.comics}). Numbers are their place in each list.`;
 document.getElementById("xrows").innerHTML=D.cross.map(o=>`<tr><td>${esc(o.name)}</td>${M.map(([m])=>{const p=o.pos[m];return `<td class="p">${p||""}</td>`}).join("")}</tr>`).join("");
