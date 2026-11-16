@@ -95,6 +95,7 @@ details[open] summary::before{content:"▾ ";}
  .tablebox td.ment .bar{max-width:100%}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+.srclist summary{font-size:14px;margin-top:6px}
 </style>
 </head>
 <body>
@@ -121,8 +122,7 @@ details[open] summary::before{content:"▾ ";}
 <div id="tip" role="tooltip"></div>
 
 <h2>Lists used</h2>
-<p class="note">Every list below is counted in full unless marked partial.</p>
-<div class="srcs" id="srcs"></div>
+<details class="srclist"><summary id="srcsum">Show all lists</summary><div class="srcs" id="srcs"></div></details>
 
 </div>
 <script>
@@ -151,6 +151,7 @@ function render(){
   const m=document.getElementById("more");const base=50;m.style.display=(q||rows.length<=base)?"none":"inline-block";m.textContent=all?`Show top ${base}`:`Show all ${rows.length}`;
 }
 const gOf=i=>{for(const [k] of G){if(k!=="polls"&&A.groups[k].includes(+i))return G.find(x=>x[0]===k)[1]}return "Partial"};
+document.getElementById("srcsum").textContent=`Show all ${Object.keys(L).length} lists`;
 document.getElementById("srcs").innerHTML=Object.values(L).sort((x,y)=>x.p.localeCompare(y.p)).map(x=>`<div class="src"><b>${esc(x.t)}</b><div class="meta">${esc(x.p)}${x.y?" · "+esc(x.y):""} · ${x.n} entries${A.polls.includes(x.id)?" · poll":""}${ACC.site.some(s=>s[0]===x.id)?" · partial":""}${x.entries.every(e=>e[1]===null)?" · unranked":""}${x.note?`<br>${esc(x.note)}`:""}</div></div>`).join("");
 // ---- Insights ----
 const TOP=A.tallies.general.slice(0,50).map((o,i)=>({...o,pos:i+1,...(TR[o.name]||{})}));
