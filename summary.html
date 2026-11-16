@@ -154,8 +154,7 @@ function stab(title,sub,key,opt={}){
   <table><thead><tr><th></th><th>All</th>${M.map(([,l])=>`<th>${l}</th>`).join("")}</tr></thead><tbody>${e.map(([k,v])=>{
     const per=M.map(([m])=>{const c=v.filter(o=>o.media.includes(m)).length;return `<td class="m" title="${c} of ${N[m]}">${pct(c,N[m])}</td>`}).join("");
     return `<tr class="${k===top?"top":""}"><td>${esc(k)}</td><td class="all"><div class="w"><div class="b"><i style="width:${v.length/max*100}%"></i></div><span>${v.length} · ${pct(v.length,tot)}</span></div></td>${per}</tr>`}).join("")}</tbody></table>
-  ${other?`<p class="sub" style="margin-top:8px">Other countries: ${other.map(([k,v])=>`${esc(k)} (${v.length})`).join(", ")}.</p>`:""}
-  <details class="chart"><summary>Show villains</summary><table>${e.map(([k,v])=>`<tr><td><b>${esc(k)}</b> (${v.length})</td><td>${v.map(o=>esc(o.name)).join(", ")}</td></tr>`).join("")}</table></details>`;
+  ${other?`<p class="sub" style="margin-top:8px">Other countries: ${other.map(([k,v])=>`${esc(k)} (${v.length})`).join(", ")}.</p>`:""}`;
   document.getElementById("sum").appendChild(el);
 }
 stab("Gender","Gender of the character as presented. “None” is for genderless beings such as the Borg and HAL 9000; the Master has been played as both.","gender");
