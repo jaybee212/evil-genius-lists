@@ -184,12 +184,13 @@ function stab(title,sub,key,opt={}){
 }
 const DC=["var(--accent)","var(--ink)","#9a9a9a","#d4d4d4"];
 const DL={"Superpower":"Super","No superpower":"Not super"};const dl=k=>DL[k]||k;
+const lrp=(cs)=>{const t=cs.reduce((a,b)=>a+b,0)||1;const raw=cs.map(c=>c/t*100);const fl=raw.map(Math.floor);let left=100-fl.reduce((a,b)=>a+b,0);raw.map((r,i)=>[r-fl[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{if(left>0&&cs[i]>0){fl[i]++;left--}});return fl};
 function donutSVG(rows,tot){
   const r=54,C=2*Math.PI*r;let off=0;const segs=rows.filter(x=>x[1]>0);
   const arcs=segs.map(([k,c],i)=>{const len=c/tot*C;const gap=segs.length>1?Math.min(2,len/2):0;const a=`<circle r="${r}" cx="70" cy="70" fill="none" stroke="${DC[i%DC.length]}" stroke-width="22" stroke-dasharray="${Math.max(len-gap,0.01)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;off+=len;return a}).join("");
-  const [k0,c0]=segs[0]||["",0];
-  return `<div class="dwrap"><svg viewBox="0 0 140 140" class="dsvg" role="img" aria-label="${segs.map(([k,c])=>esc(dl(k))+' '+pct(c,tot)).join(', ')}">${arcs}<text x="70" y="70" text-anchor="middle" class="dbig">${pct(c0,tot)}</text><text x="70" y="90" text-anchor="middle" class="dsm">${esc(dl(k0)).toUpperCase()}</text></svg>
-  <ul class="dleg">${segs.map(([k,c],i)=>`<li><i style="background:${DC[i%DC.length]}"></i>${esc(dl(k))}<b>${pct(c,tot)}</b></li>`).join("")}</ul></div>`;
+  const [k0,c0]=segs[0]||["",0];const P=lrp(segs.map(x=>x[1]));
+  return `<div class="dwrap"><svg viewBox="0 0 140 140" class="dsvg" role="img" aria-label="${segs.map(([k,c])=>esc(dl(k))+' '+pct(c,tot)).join(', ')}">${arcs}<text x="70" y="70" text-anchor="middle" class="dbig">${P[0]}%</text><text x="70" y="90" text-anchor="middle" class="dsm" style="font-size:${Math.min(9.5,72/dl(k0).length)}px">${esc(dl(k0)).toUpperCase()}</text></svg>
+  <ul class="dleg">${segs.map(([k,c],i)=>`<li><i style="background:${DC[i%DC.length]}"></i>${esc(dl(k))}<b>${P[i]}%</b></li>`).join("")}</ul></div>`;
 }
 function draw(){
   const tot=cur==="all"?R.length:R.filter(o=>o.media.includes(cur)).length;
