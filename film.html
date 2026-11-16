@@ -153,7 +153,7 @@ function render(){
 }
 const gOf=i=>{for(const [k] of G){if(k!=="polls"&&A.groups[k].includes(+i))return G.find(x=>x[0]===k)[1]}return "Partial"};
 document.getElementById("srcsum").textContent=`Show all ${Object.keys(L).length} lists`;
-document.getElementById("srcs").innerHTML=Object.values(L).sort((x,y)=>x.p.localeCompare(y.p)).map(x=>`<div class="src"><a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a><div class="meta">${esc(x.p)}${x.y?" · "+esc(x.y):""} · ${x.n} entries${A.polls.includes(x.id)?" · poll":""}${ACC.site.some(s=>s[0]===x.id)?" · partial":""}${x.entries.every(e=>e[1]===null)?" · unranked":""}</div></div>`).join("");
+document.getElementById("srcs").innerHTML=Object.values(L).sort((x,y)=>x.p.localeCompare(y.p)).map(x=>`<div class="src"><b>${esc(x.t)}</b><div class="meta">${esc(x.p)}${x.y?" · "+esc(x.y):""} · ${x.n} entries${A.polls.includes(x.id)?" · poll":""}${ACC.site.some(s=>s[0]===x.id)?" · partial":""}${x.entries.every(e=>e[1]===null)?" · unranked":""}</div></div>`).join("");
 // ---- Insights ----
 const TOP=A.tallies.general.slice(0,100).map((o,i)=>({...o,pos:i+1,...(TR[o.name]||{})}));
 const tip=document.getElementById("tip");
