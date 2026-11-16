@@ -117,7 +117,9 @@ details[open] summary::before{content:"▾ ";}
 .cross td{text-align:left}
 .cross td.p{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
 .cross td.p b{color:var(--ink)}
-@media (max-width:600px){.stab td.all{width:auto}.stab td.all .b{display:none}.stab td,.stab th{padding:6px 4px}}
+.stab .mb{display:none}
+@media (max-width:400px){.stab table{font-size:12px}.stab th{font-size:9.5px;letter-spacing:.03em}.stab td,.stab th{padding:5px 3px!important}.cross td.p{padding-left:2px}.stab td.all span{min-width:0}.stab td:first-child{hyphens:auto;overflow-wrap:anywhere}}
+@media (max-width:600px){.stab td.all{width:auto}.stab td.all .b{display:none}.stab .mb{display:block;height:6px;background:var(--chip);border-radius:0 3px 3px 0;margin-top:5px}.stab .mb i{display:block;height:100%;background:var(--ink);border-radius:0 3px 3px 0}.stab tr.top .mb i{background:var(--accent)}.stab td,.stab th{padding:6px 4px}}
 </style>
 </head>
 <body>
@@ -153,7 +155,7 @@ function stab(title,sub,key,opt={}){
   el.innerHTML=`<h3>${title}${opt.flag?'<span class="flag">judgement</span>':''}</h3><p class="sub">${sub}</p>
   <table><thead><tr><th></th><th>All</th>${M.map(([,l])=>`<th>${l}</th>`).join("")}</tr></thead><tbody>${e.map(([k,v])=>{
     const per=M.map(([m])=>{const c=v.filter(o=>o.media.includes(m)).length;return `<td class="m" title="${c} of ${N[m]}">${pct(c,N[m])}</td>`}).join("");
-    return `<tr class="${k===top?"top":""}"><td>${esc(k)}</td><td class="all"><div class="w"><div class="b"><i style="width:${v.length/max*100}%"></i></div><span>${v.length} · ${pct(v.length,tot)}</span></div></td>${per}</tr>`}).join("")}</tbody></table>
+    return `<tr class="${k===top?"top":""}"><td>${esc(k)}<div class="mb"><i style="width:${v.length/max*100}%"></i></div></td><td class="all"><div class="w"><div class="b"><i style="width:${v.length/max*100}%"></i></div><span>${v.length} · ${pct(v.length,tot)}</span></div></td>${per}</tr>`}).join("")}</tbody></table>
   ${other?`<p class="sub" style="margin-top:8px">Other countries: ${other.map(([k,v])=>`${esc(k)} (${v.length})`).join(", ")}.</p>`:""}`;
   document.getElementById("sum").appendChild(el);
 }
